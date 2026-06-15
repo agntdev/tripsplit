@@ -5,6 +5,7 @@
 
 export type SessionStep =
   | "idle"
+  | "awaiting_add_member"
   | "expense_payer"
   | "expense_participants"
   | "expense_pick_people"
