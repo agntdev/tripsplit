@@ -6,6 +6,7 @@
 import { createBot } from "@agntdev/bot-toolkit";
 import { registerExpenseFlow } from "./flows/expense";
 import { registerMembersFlow } from "./flows/members";
+import { startSettlementExpirySweep } from "./jobs/settlementExpiry";
 import { registerSettleFlow } from "./flows/settle";
 import { registerSuggestedFlow } from "./flows/suggested";
 import type { Ctx } from "./context";
@@ -31,10 +32,16 @@ export function makeBot(repo: Repository = createRepository()) {
   registerSettleFlow(bot, repo);
   registerNoSlashCommands(bot);
 
+  bot.catch((err) => {
+    console.error("Bot error:", err);
+  });
+
   return bot;
 }
 
 if (require.main === module) {
-  const bot = makeBot();
+  const repo = createRepository();
+  const bot = makeBot(repo);
+  startSettlementExpirySweep(bot, repo);
   bot.start();
 }
