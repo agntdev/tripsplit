@@ -52,7 +52,7 @@ export function registerSettleFlow(bot: Bot<Ctx>, repo: Repository): void {
     );
     if (disputeMatch) {
       if (ctx.chat?.type !== "private") return;
-      await handlePayeeDispute(ctx, repo, Number(disputeMatch[1]));
+      await handlePayeeDispute(ctx, repo, bot, Number(disputeMatch[1]));
       return;
     }
 
