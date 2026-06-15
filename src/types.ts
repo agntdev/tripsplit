@@ -6,6 +6,7 @@
 export type SessionStep =
   | "idle"
   | "awaiting_add_member"
+  | "expense_amount"
   | "expense_payer"
   | "expense_participants"
   | "expense_pick_people"
@@ -21,6 +22,10 @@ export interface ExpenseDraft {
   participantUserIds: number[];
   splitMode: "even" | "cents" | "percent" | null;
   shares: Array<{ userId: number; shareCents: number }>;
+  /** Index into participantUserIds for sequential custom input. */
+  customCursor: number;
+  /** Collected percents during custom % wizard. */
+  percentByUser: Record<number, number>;
 }
 
 export interface Session {
