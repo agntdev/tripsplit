@@ -1,0 +1,709 @@
+[
+  {
+    "name": "help before trip",
+    "steps": [
+      {
+        "send": {
+          "update": {
+            "update_id": 1,
+            "message": {
+              "message_id": 1,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "❓ Help"
+            }
+          }
+        },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "TripSplit — shared trip expenses\n\nUse the buttons below to:\n• Log Expense — record a shared cost\n• Balances — see who owes what\n• Suggested — minimal repayments\n• Settle — confirm a payment\n• Members — add or remove people\n• Export — audit CSV to your DM\n\nTap 🚀 Start Trip to begin in a new group."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "start trip",
+    "steps": [
+      {
+        "send": {
+          "update": {
+            "update_id": 1,
+            "message": {
+              "message_id": 1,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "🚀 Start Trip"
+            }
+          }
+        },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "✅ Trip initialized!\nOrganizer: @alice\nParticipants: 1\nUse the buttons below to log expenses and track balances."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "duplicate start trip",
+    "steps": [
+      {
+        "send": {
+          "update": {
+            "update_id": 1,
+            "message": {
+              "message_id": 1,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "🚀 Start Trip"
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 2,
+            "message": {
+              "message_id": 2,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "🚀 Start Trip"
+            }
+          }
+        },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "This group already has a trip. Tap 📊 Balances to see where you stand."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "slash commands rejected",
+    "steps": [
+      {
+        "send": {
+          "update": {
+            "update_id": 1,
+            "message": {
+              "message_id": 1,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "/help",
+              "entities": [{ "type": "bot_command", "offset": 0, "length": 5 }]
+            }
+          }
+        },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "TripSplit uses buttons only — tap ❓ Help to see the menu."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "balances after init",
+    "steps": [
+      {
+        "send": {
+          "update": {
+            "update_id": 1,
+            "message": {
+              "message_id": 1,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "🚀 Start Trip"
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 2,
+            "message": {
+              "message_id": 2,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "📊 Balances"
+            }
+          }
+        },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Balances (USD):\n@alice   +$0.00" }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "members menu",
+    "steps": [
+      {
+        "send": {
+          "update": {
+            "update_id": 1,
+            "message": {
+              "message_id": 1,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "🚀 Start Trip"
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 2,
+            "message": {
+              "message_id": 2,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "👥 Members"
+            }
+          }
+        },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Manage trip members:" }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "add member via mention",
+    "steps": [
+      {
+        "send": {
+          "update": {
+            "update_id": 1,
+            "message": {
+              "message_id": 1,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "🚀 Start Trip"
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 2,
+            "callback_query": {
+              "id": "2",
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "message": {
+                "message_id": 10,
+                "date": 0,
+                "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+                "from": { "id": 42, "is_bot": true, "first_name": "TestBot" },
+                "text": "(previous)"
+              },
+              "chat_instance": "ci--1001",
+              "data": "ts:members:add"
+            }
+          }
+        },
+        "expect": [{ "method": "answerCallbackQuery" }, { "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 3,
+            "message": {
+              "message_id": 3,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "add @bob",
+              "entities": [
+                {
+                  "type": "text_mention",
+                  "offset": 4,
+                  "length": 4,
+                  "user": { "id": 1002, "is_bot": false, "first_name": "Bob", "username": "bob" }
+                }
+              ]
+            }
+          }
+        },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Added @bob to the trip." }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "expense even split",
+    "steps": [
+      {
+        "send": {
+          "update": {
+            "update_id": 1,
+            "message": {
+              "message_id": 1,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "🚀 Start Trip"
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 2,
+            "callback_query": {
+              "id": "2",
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "message": {
+                "message_id": 10,
+                "date": 0,
+                "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+                "from": { "id": 42, "is_bot": true, "first_name": "TestBot" },
+                "text": "(previous)"
+              },
+              "chat_instance": "ci--1001",
+              "data": "ts:members:add"
+            }
+          }
+        },
+        "expect": [{ "method": "answerCallbackQuery" }, { "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 3,
+            "message": {
+              "message_id": 3,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "add @bob",
+              "entities": [
+                {
+                  "type": "text_mention",
+                  "offset": 4,
+                  "length": 4,
+                  "user": { "id": 1002, "is_bot": false, "first_name": "Bob", "username": "bob" }
+                }
+              ]
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 4,
+            "message": {
+              "message_id": 4,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "💰 Log Expense"
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 5,
+            "message": {
+              "message_id": 5,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "20.00 lunch"
+            }
+          }
+        },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "New expense: $20.00 — lunch\nWho paid?"
+            }
+          }
+        ]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 6,
+            "callback_query": {
+              "id": "6",
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "message": {
+                "message_id": 10,
+                "date": 0,
+                "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+                "from": { "id": 42, "is_bot": true, "first_name": "TestBot" },
+                "text": "(previous)"
+              },
+              "chat_instance": "ci--1001",
+              "data": "ts:expense:payer:1001"
+            }
+          }
+        },
+        "expect": [{ "method": "answerCallbackQuery" }, { "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 7,
+            "callback_query": {
+              "id": "7",
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "message": {
+                "message_id": 10,
+                "date": 0,
+                "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+                "from": { "id": 42, "is_bot": true, "first_name": "TestBot" },
+                "text": "(previous)"
+              },
+              "chat_instance": "ci--1001",
+              "data": "ts:expense:everyone"
+            }
+          }
+        },
+        "expect": [{ "method": "answerCallbackQuery" }, { "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 8,
+            "callback_query": {
+              "id": "8",
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "message": {
+                "message_id": 10,
+                "date": 0,
+                "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+                "from": { "id": 42, "is_bot": true, "first_name": "TestBot" },
+                "text": "(previous)"
+              },
+              "chat_instance": "ci--1001",
+              "data": "ts:expense:split:even"
+            }
+          }
+        },
+        "expect": [{ "method": "answerCallbackQuery" }, { "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 9,
+            "callback_query": {
+              "id": "9",
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "message": {
+                "message_id": 10,
+                "date": 0,
+                "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+                "from": { "id": 42, "is_bot": true, "first_name": "TestBot" },
+                "text": "(previous)"
+              },
+              "chat_instance": "ci--1001",
+              "data": "ts:expense:post"
+            }
+          }
+        },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "✅ Logged: @alice paid $20.00 for lunch\nUpdated balances:\n@alice   +$10.00\n@bob   −$10.00"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "suggested shows debt",
+    "steps": [
+      {
+        "send": {
+          "update": {
+            "update_id": 1,
+            "message": {
+              "message_id": 1,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "🚀 Start Trip"
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 2,
+            "callback_query": {
+              "id": "2",
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "message": {
+                "message_id": 10,
+                "date": 0,
+                "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+                "from": { "id": 42, "is_bot": true, "first_name": "TestBot" },
+                "text": "(previous)"
+              },
+              "chat_instance": "ci--1001",
+              "data": "ts:members:add"
+            }
+          }
+        },
+        "expect": [{ "method": "answerCallbackQuery" }, { "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 3,
+            "message": {
+              "message_id": 3,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "add @bob",
+              "entities": [
+                {
+                  "type": "text_mention",
+                  "offset": 4,
+                  "length": 4,
+                  "user": { "id": 1002, "is_bot": false, "first_name": "Bob", "username": "bob" }
+                }
+              ]
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 4,
+            "message": {
+              "message_id": 4,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "💰 Log Expense"
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 5,
+            "message": {
+              "message_id": 5,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "20.00"
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 6,
+            "callback_query": {
+              "id": "6",
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "message": {
+                "message_id": 10,
+                "date": 0,
+                "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+                "from": { "id": 42, "is_bot": true, "first_name": "TestBot" },
+                "text": "(previous)"
+              },
+              "chat_instance": "ci--1001",
+              "data": "ts:expense:payer:1001"
+            }
+          }
+        },
+        "expect": [{ "method": "answerCallbackQuery" }, { "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 7,
+            "callback_query": {
+              "id": "7",
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "message": {
+                "message_id": 10,
+                "date": 0,
+                "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+                "from": { "id": 42, "is_bot": true, "first_name": "TestBot" },
+                "text": "(previous)"
+              },
+              "chat_instance": "ci--1001",
+              "data": "ts:expense:everyone"
+            }
+          }
+        },
+        "expect": [{ "method": "answerCallbackQuery" }, { "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 8,
+            "callback_query": {
+              "id": "8",
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "message": {
+                "message_id": 10,
+                "date": 0,
+                "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+                "from": { "id": 42, "is_bot": true, "first_name": "TestBot" },
+                "text": "(previous)"
+              },
+              "chat_instance": "ci--1001",
+              "data": "ts:expense:split:even"
+            }
+          }
+        },
+        "expect": [{ "method": "answerCallbackQuery" }, { "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 9,
+            "callback_query": {
+              "id": "9",
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "message": {
+                "message_id": 10,
+                "date": 0,
+                "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+                "from": { "id": 42, "is_bot": true, "first_name": "TestBot" },
+                "text": "(previous)"
+              },
+              "chat_instance": "ci--1001",
+              "data": "ts:expense:post"
+            }
+          }
+        },
+        "expect": [{ "method": "answerCallbackQuery" }, { "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 10,
+            "message": {
+              "message_id": 10,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "💸 Suggested"
+            }
+          }
+        },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Suggested payments:\n1. @bob pays @alice $10.00"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "export ack in group",
+    "steps": [
+      {
+        "send": {
+          "update": {
+            "update_id": 1,
+            "message": {
+              "message_id": 1,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "🚀 Start Trip"
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "update": {
+            "update_id": 2,
+            "message": {
+              "message_id": 2,
+              "date": 0,
+              "chat": { "id": -1001, "type": "supergroup", "title": "Trip" },
+              "from": { "id": 1001, "is_bot": false, "first_name": "Alice", "username": "alice" },
+              "text": "📁 Export"
+            }
+          }
+        },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Sending the audit export to your DM…" }
+          },
+          { "method": "sendDocument" }
+        ]
+      }
+    ]
+  }
+]
