@@ -7,7 +7,9 @@
 import { createBot } from "@agntdev/bot-toolkit";
 import { registerHelp } from "./commands/help";
 import { registerInitTrip } from "./commands/initTrip";
+import { registerExpenseCommand } from "./commands/expense";
 import { registerMembersCommands } from "./commands/members";
+import { registerExpenseFlow } from "./flows/expense";
 import { registerMembersFlow } from "./flows/members";
 import type { Ctx } from "./context";
 import { tripAccessMiddleware } from "./middleware/access";
@@ -25,9 +27,11 @@ export function makeBot(repo: Repository = createRepository()) {
   bot.use(tripAccessMiddleware(repo));
 
   registerMenu(bot, repo);
+  registerExpenseFlow(bot, repo);
   registerMembersFlow(bot, repo);
   registerHelp(bot, repo);
   registerInitTrip(bot, repo);
+  registerExpenseCommand(bot, repo);
   registerMembersCommands(bot, repo);
 
   return bot;
