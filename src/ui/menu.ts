@@ -6,6 +6,7 @@ import { CB_PREFIX } from "../config";
 import type { Ctx } from "../context";
 import { showHelp } from "../actions/help";
 import { runInitTrip } from "../actions/initTrip";
+import { showBalances } from "../actions/balances";
 import { promptExpenseAmount } from "../actions/expense";
 import { showMembersMenu } from "../actions/members";
 import { isGroupChat } from "../middleware/access";
@@ -28,7 +29,7 @@ export function registerMenu(bot: Bot<Ctx>, repo: Repository): void {
 
   bot.hears(MENU.BALANCES, async (ctx) => {
     if (!ctx.trip) return;
-    await notYet(ctx, "Balances");
+    await showBalances(ctx, repo);
   });
 
   bot.hears(MENU.SUGGESTED, async (ctx) => {
@@ -84,10 +85,10 @@ export function registerMenu(bot: Bot<Ctx>, repo: Repository): void {
     switch (data) {
       case `${CB_PREFIX}menu:expense`:
         await promptExpenseAmount(ctx);
-        break;
+        return;
       case `${CB_PREFIX}menu:balances`:
-        await notYet(ctx, "Balances");
-        break;
+        await showBalances(ctx, repo);
+        return;
       case `${CB_PREFIX}menu:suggested`:
         await notYet(ctx, "Suggested payments");
         break;
