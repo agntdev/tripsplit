@@ -10,14 +10,11 @@ import { showBalances } from "../actions/balances";
 import { promptExpenseAmount } from "../actions/expense";
 import { showMembersMenu } from "../actions/members";
 import { showSuggested } from "../actions/suggested";
+import { runTripExport } from "../actions/export";
 import { promptSettlePayee } from "../actions/settle";
 import { isGroupChat } from "../middleware/access";
 import type { Repository } from "../storage/repository";
 import { MENU } from "./labels";
-
-async function notYet(ctx: Ctx, feature: string): Promise<void> {
-  await ctx.reply(`${feature} is coming in the next update. Check back soon!`);
-}
 
 export function registerMenu(bot: Bot<Ctx>, repo: Repository): void {
   // ── Reply-keyboard taps ──────────────────────────────────────────────
@@ -51,7 +48,7 @@ export function registerMenu(bot: Bot<Ctx>, repo: Repository): void {
 
   bot.hears(MENU.EXPORT, async (ctx) => {
     if (!ctx.trip) return;
-    await notYet(ctx, "Export");
+    await runTripExport(ctx, repo);
   });
 
   // ── Inline menu callbacks ────────────────────────────────────────────
@@ -93,6 +90,12 @@ export function registerMenu(bot: Bot<Ctx>, repo: Repository): void {
         return;
       case `${CB_PREFIX}menu:suggested`:
         await showSuggested(ctx, repo);
+        return;
+      case `${CB_PREFIX}menu:settle`:
+        await promptSettlePayee(ctx, repo);
+        return;
+      case `${CB_PREFIX}menu:export`:
+        await runTripExport(ctx, repo);
         return;
       default:
         break;
