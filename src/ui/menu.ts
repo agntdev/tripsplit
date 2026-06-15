@@ -10,6 +10,7 @@ import { showBalances } from "../actions/balances";
 import { promptExpenseAmount } from "../actions/expense";
 import { showMembersMenu } from "../actions/members";
 import { showSuggested } from "../actions/suggested";
+import { promptSettlePayee } from "../actions/settle";
 import { isGroupChat } from "../middleware/access";
 import type { Repository } from "../storage/repository";
 import { MENU } from "./labels";
@@ -40,7 +41,7 @@ export function registerMenu(bot: Bot<Ctx>, repo: Repository): void {
 
   bot.hears(MENU.SETTLE, async (ctx) => {
     if (!ctx.trip) return;
-    await notYet(ctx, "Settle");
+    await promptSettlePayee(ctx, repo);
   });
 
   bot.hears(MENU.MEMBERS, async (ctx) => {

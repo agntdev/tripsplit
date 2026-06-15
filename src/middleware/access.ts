@@ -81,8 +81,16 @@ export function tripAccessMiddleware(
       return;
     }
 
+    const WIZARD_STEPS = new Set([
+      "awaiting_add_member",
+      "expense_amount",
+      "expense_custom_amounts",
+      "expense_custom_percent",
+      "settle_amount",
+    ]);
+
     if (!label) {
-      if (ctx.session.step !== "idle") {
+      if (WIZARD_STEPS.has(ctx.session.step)) {
         const groupId = ctx.chat!.id;
         const trip = repo.getTripByGroupId(groupId);
         const participant = trip

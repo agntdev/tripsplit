@@ -6,6 +6,7 @@
 import { createBot } from "@agntdev/bot-toolkit";
 import { registerExpenseFlow } from "./flows/expense";
 import { registerMembersFlow } from "./flows/members";
+import { registerSettleFlow } from "./flows/settle";
 import { registerSuggestedFlow } from "./flows/suggested";
 import type { Ctx } from "./context";
 import { tripAccessMiddleware } from "./middleware/access";
@@ -27,6 +28,7 @@ export function makeBot(repo: Repository = createRepository()) {
   registerExpenseFlow(bot, repo);
   registerMembersFlow(bot, repo);
   registerSuggestedFlow(bot, repo);
+  registerSettleFlow(bot, repo);
   registerNoSlashCommands(bot);
 
   return bot;

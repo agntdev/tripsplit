@@ -25,6 +25,50 @@ export function computeBalances(tripId: number, repo: Repository): BalanceMap {
   return balances;
 }
 
+/** Net amount payer owes payee (USD cents), floored at zero. */
+export function getPairBalance(
+  tripId: number,
+  payerUserId: number,
+  payeeUserId: number,
+  repo: Repository,
+): number {
+  let net = 0;
+
+  for (const expense of repo.listExpenses(tripId)) {
+    const expenseShares = repo.listSharesForExpense(expense.id);
+    if (expense.payerUserId === payeeUserId) {
+      for (const share of expenseShares) {
+        if (share.participantUserId === payerUserId) {
+          net += share.shareCents;
+        }
+      }
+    } else if (expense.payerUserId === payerUserId) {
+      for (const share of expenseShares) {
+        if (share.participantUserId === payeeUserId) {
+          net -= share.shareCents;
+        }
+      }
+    }
+  }
+
+  for (const settlement of repo.listSettlements(tripId)) {
+    if (settlement.status !== "cleared") continue;
+    if (
+      settlement.payerUserId === payerUserId &&
+      settlement.payeeUserId === payeeUserId
+    ) {
+      net -= settlement.amountCents;
+    } else if (
+      settlement.payerUserId === payeeUserId &&
+      settlement.payeeUserId === payerUserId
+    ) {
+      net += settlement.amountCents;
+    }
+  }
+
+  return Math.max(0, net);
+}
+
 export function formatBalanceLine(displayName: string, cents: number): string {
   const sign = cents >= 0 ? "+" : "−";
   const abs = Math.abs(cents);
