@@ -13,7 +13,9 @@ export type SessionStep =
   | "expense_split_type"
   | "expense_custom_amounts"
   | "expense_custom_percent"
-  | "expense_confirm";
+  | "expense_confirm"
+  | "settle_payee"
+  | "settle_amount";
 
 export interface ExpenseDraft {
   amountCents: number;
@@ -34,17 +36,24 @@ export interface SuggestedPayment {
   amountCents: number;
 }
 
+export interface SettlementDraft {
+  payeeUserId: number | null;
+  amountCents: number | null;
+}
+
 export interface Session {
   step: SessionStep;
   draft: ExpenseDraft | null;
   /** Ephemeral suggested payments from last suggested run. */
   suggestedPayments: SuggestedPayment[];
+  settleDraft: SettlementDraft | null;
 }
 
 export const initialSession = (): Session => ({
   step: "idle",
   draft: null,
   suggestedPayments: [],
+  settleDraft: null,
 });
 
 export type SettlementStatus = "pending" | "cleared" | "expired";

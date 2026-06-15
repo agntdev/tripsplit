@@ -2,8 +2,8 @@ import type { Bot } from "grammy";
 import { CB_PREFIX } from "../config";
 import type { Ctx } from "../context";
 import { getSuggestedPayment, showSuggested } from "../actions/suggested";
+import { startSettlementFromSuggestion } from "./settle";
 import type { Repository } from "../storage/repository";
-import { formatCents } from "../utils/amount";
 
 export function registerSuggestedFlow(bot: Bot<Ctx>, repo: Repository): void {
   bot.callbackQuery(new RegExp(`^${CB_PREFIX}suggested:`), async (ctx) => {
@@ -26,14 +26,12 @@ export function registerSuggestedFlow(bot: Bot<Ctx>, repo: Repository): void {
         await ctx.reply("Suggestion expired — tap 💸 Suggested to refresh.");
         return;
       }
-      const payer = repo.getParticipant(ctx.trip.id, payment.payerUserId);
-      const payee = repo.getParticipant(ctx.trip.id, payment.payeeUserId);
-      await ctx.reply(
-        [
-          `Settlement hint #${idx + 1}:`,
-          `${payer?.displayName ?? "payer"} → ${payee?.displayName ?? "payee"} ${formatCents(payment.amountCents)}`,
-          "Tap ✅ Settle to start the confirmation flow (coming next).",
-        ].join("\n"),
+      await startSettlementFromSuggestion(
+        ctx,
+        repo,
+        payment.payerUserId,
+        payment.payeeUserId,
+        payment.amountCents,
       );
     }
   });
