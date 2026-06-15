@@ -3,6 +3,7 @@
  * Guards slash commands and reply-keyboard menu taps (button-first UX).
  */
 import type { Middleware } from "grammy";
+import { CB_PREFIX } from "../config";
 import {
   ALL_MENU_LABELS,
   PUBLIC_MENU_LABELS,
@@ -18,6 +19,11 @@ export interface TripContext {
 
 /** Commands that skip the trip/participant guard. */
 export const PUBLIC_COMMANDS = new Set(["help", "init_trip"]);
+
+const PUBLIC_CALLBACKS = new Set([
+  `${CB_PREFIX}menu:help`,
+  `${CB_PREFIX}menu:start`,
+]);
 
 export function isGroupChat(ctx: Ctx): boolean {
   const type = ctx.chat?.type;
@@ -48,6 +54,32 @@ export function tripAccessMiddleware(
   repo: Repository,
 ): Middleware<Ctx> {
   return async (ctx, next) => {
+    if (ctx.callbackQuery && isGroupChat(ctx) && ctx.from) {
+      const data = ctx.callbackQuery.data ?? "";
+      if (!PUBLIC_CALLBACKS.has(data)) {
+        const trip = repo.getTripByGroupId(ctx.chat!.id);
+        if (!trip) {
+          await ctx.answerCallbackQuery({
+            text: "No trip yet. Tap Start Trip first.",
+            show_alert: true,
+          });
+          return;
+        }
+        const participant = repo.getParticipant(trip.id, ctx.from.id);
+        if (!participant?.active) {
+          await ctx.answerCallbackQuery({
+            text: "You're not a participant in this trip.",
+            show_alert: true,
+          });
+          return;
+        }
+        ctx.trip = trip;
+        ctx.participant = participant;
+      }
+      await next();
+      return;
+    }
+
     if (!isGroupChat(ctx) || !ctx.from) {
       await next();
       return;
@@ -67,6 +99,17 @@ export function tripAccessMiddleware(
     }
 
     if (!cmd && !label) {
+      if (ctx.session.step !== "idle") {
+        const groupId = ctx.chat!.id;
+        const trip = repo.getTripByGroupId(groupId);
+        const participant = trip
+          ? repo.getParticipant(trip.id, ctx.from.id)
+          : undefined;
+        if (trip && participant?.active) {
+          ctx.trip = trip;
+          ctx.participant = participant;
+        }
+      }
       await next();
       return;
     }

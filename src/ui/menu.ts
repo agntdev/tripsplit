@@ -6,6 +6,7 @@ import { CB_PREFIX } from "../config";
 import type { Ctx } from "../context";
 import { showHelp } from "../actions/help";
 import { runInitTrip } from "../actions/initTrip";
+import { showMembersMenu } from "../actions/members";
 import { isGroupChat } from "../middleware/access";
 import type { Repository } from "../storage/repository";
 import { MENU } from "./labels";
@@ -41,7 +42,7 @@ export function registerMenu(bot: Bot<Ctx>, repo: Repository): void {
 
   bot.hears(MENU.MEMBERS, async (ctx) => {
     if (!ctx.trip) return;
-    await notYet(ctx, "Members");
+    await showMembersMenu(ctx);
   });
 
   bot.hears(MENU.EXPORT, async (ctx) => {
