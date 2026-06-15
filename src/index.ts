@@ -7,6 +7,7 @@
 import { createBot } from "@agntdev/bot-toolkit";
 import { registerHelp } from "./commands/help";
 import { registerInitTrip } from "./commands/initTrip";
+import { registerBalancesCommand } from "./commands/balances";
 import { registerExpenseCommand } from "./commands/expense";
 import { registerMembersCommands } from "./commands/members";
 import { registerExpenseFlow } from "./flows/expense";
@@ -31,6 +32,7 @@ export function makeBot(repo: Repository = createRepository()) {
   registerMembersFlow(bot, repo);
   registerHelp(bot, repo);
   registerInitTrip(bot, repo);
+  registerBalancesCommand(bot, repo);
   registerExpenseCommand(bot, repo);
   registerMembersCommands(bot, repo);
 
