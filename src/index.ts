@@ -1,19 +1,14 @@
 /**
  * TripSplit — entry point.
  *
- * Button-first UX: reply-keyboard main menu + inline action buttons.
- * Slash commands remain as harness fallbacks.
+ * Button-only UX: reply-keyboard main menu + inline action buttons.
  */
 import { createBot } from "@agntdev/bot-toolkit";
-import { registerHelp } from "./commands/help";
-import { registerInitTrip } from "./commands/initTrip";
-import { registerBalancesCommand } from "./commands/balances";
-import { registerExpenseCommand } from "./commands/expense";
-import { registerMembersCommands } from "./commands/members";
 import { registerExpenseFlow } from "./flows/expense";
 import { registerMembersFlow } from "./flows/members";
 import type { Ctx } from "./context";
 import { tripAccessMiddleware } from "./middleware/access";
+import { registerNoSlashCommands } from "./middleware/noSlashCommands";
 import { createRepository, type Repository } from "./storage/repository";
 import { initialSession, type Session } from "./types";
 import { registerMenu } from "./ui/menu";
@@ -30,11 +25,7 @@ export function makeBot(repo: Repository = createRepository()) {
   registerMenu(bot, repo);
   registerExpenseFlow(bot, repo);
   registerMembersFlow(bot, repo);
-  registerHelp(bot, repo);
-  registerInitTrip(bot, repo);
-  registerBalancesCommand(bot, repo);
-  registerExpenseCommand(bot, repo);
-  registerMembersCommands(bot, repo);
+  registerNoSlashCommands(bot);
 
   return bot;
 }

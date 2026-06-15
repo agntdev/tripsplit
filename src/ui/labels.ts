@@ -1,6 +1,6 @@
 /**
  * Button labels for reply-keyboard and inline-keyboard UI.
- * Users interact via taps — slash commands remain as fallbacks for the harness.
+ * TripSplit is button-only — no slash commands.
  */
 
 export const MENU = {
