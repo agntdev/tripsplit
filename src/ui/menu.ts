@@ -9,6 +9,7 @@ import { runInitTrip } from "../actions/initTrip";
 import { showBalances } from "../actions/balances";
 import { promptExpenseAmount } from "../actions/expense";
 import { showMembersMenu } from "../actions/members";
+import { showSuggested } from "../actions/suggested";
 import { isGroupChat } from "../middleware/access";
 import type { Repository } from "../storage/repository";
 import { MENU } from "./labels";
@@ -34,7 +35,7 @@ export function registerMenu(bot: Bot<Ctx>, repo: Repository): void {
 
   bot.hears(MENU.SUGGESTED, async (ctx) => {
     if (!ctx.trip) return;
-    await notYet(ctx, "Suggested payments");
+    await showSuggested(ctx, repo);
   });
 
   bot.hears(MENU.SETTLE, async (ctx) => {
@@ -90,8 +91,8 @@ export function registerMenu(bot: Bot<Ctx>, repo: Repository): void {
         await showBalances(ctx, repo);
         return;
       case `${CB_PREFIX}menu:suggested`:
-        await notYet(ctx, "Suggested payments");
-        break;
+        await showSuggested(ctx, repo);
+        return;
       default:
         break;
     }

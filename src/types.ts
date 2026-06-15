@@ -28,14 +28,23 @@ export interface ExpenseDraft {
   percentByUser: Record<number, number>;
 }
 
+export interface SuggestedPayment {
+  payerUserId: number;
+  payeeUserId: number;
+  amountCents: number;
+}
+
 export interface Session {
   step: SessionStep;
   draft: ExpenseDraft | null;
+  /** Ephemeral suggested payments from last suggested run. */
+  suggestedPayments: SuggestedPayment[];
 }
 
 export const initialSession = (): Session => ({
   step: "idle",
   draft: null,
+  suggestedPayments: [],
 });
 
 export type SettlementStatus = "pending" | "cleared" | "expired";

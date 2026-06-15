@@ -43,6 +43,19 @@ export function balancesInlineKeyboard() {
   ]);
 }
 
+/** Settle shortcuts and refresh under the suggested payments screen. */
+export function suggestedKeyboard(count: number) {
+  const settleRow = [];
+  for (let i = 0; i < count && i < 3; i += 1) {
+    settleRow.push(
+      inlineButton(`Settle #${i + 1}`, `${CB_PREFIX}suggested:settle:${i}`),
+    );
+  }
+  const rows = settleRow.length > 0 ? [settleRow] : [];
+  rows.push([inlineButton("Refresh", `${CB_PREFIX}suggested:refresh`)]);
+  return inlineKeyboard(rows);
+}
+
 /** Members management inline menu. */
 export function membersMenuKeyboard() {
   return inlineKeyboard([
