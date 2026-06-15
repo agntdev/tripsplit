@@ -1,23 +1,20 @@
 /**
  * TripSplit — entry point.
  *
- * Exposes the mandatory `makeBot()` factory the test harness imports. It must
- * return a FRESH bot on every call (never a module-level singleton).
- * See docs/design.md §1.4.
+ * Button-first UX: reply-keyboard main menu + inline action buttons.
+ * Slash commands remain as harness fallbacks.
  */
 import { createBot } from "@agntdev/bot-toolkit";
+import { registerHelp } from "./commands/help";
 import { registerInitTrip } from "./commands/initTrip";
 import type { Ctx } from "./context";
 import { tripAccessMiddleware } from "./middleware/access";
 import { createRepository, type Repository } from "./storage/repository";
 import { initialSession, type Session } from "./types";
+import { registerMenu } from "./ui/menu";
 
 export type { Ctx } from "./context";
 
-/**
- * Build a fresh bot instance. Feature tasks (F02–F10) register command and
- * flow handlers here.
- */
 export function makeBot(repo: Repository = createRepository()) {
   const bot = createBot<Session>(process.env.BOT_TOKEN!, {
     initial: initialSession,
@@ -25,12 +22,13 @@ export function makeBot(repo: Repository = createRepository()) {
 
   bot.use(tripAccessMiddleware(repo));
 
+  registerMenu(bot, repo);
+  registerHelp(bot, repo);
   registerInitTrip(bot, repo);
 
   return bot;
 }
 
-// Standalone run (outside the harness).
 if (require.main === module) {
   const bot = makeBot();
   bot.start();

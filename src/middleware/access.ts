@@ -1,8 +1,12 @@
 /**
  * Trip access-control middleware.
- * See docs/details.md §ACCESS CONTROL MIDDLEWARE.
+ * Guards slash commands and reply-keyboard menu taps (button-first UX).
  */
 import type { Middleware } from "grammy";
+import {
+  ALL_MENU_LABELS,
+  PUBLIC_MENU_LABELS,
+} from "../ui/labels";
 import type { Repository } from "../storage/repository";
 import type { Participant, Trip } from "../types";
 import type { Ctx } from "../context";
@@ -29,9 +33,16 @@ function commandName(ctx: Ctx): string | undefined {
   return raw.replace(/@\w+$/, "").slice(1).toLowerCase();
 }
 
+function menuLabel(ctx: Ctx): string | undefined {
+  const text = ctx.message?.text?.trim();
+  if (!text || commandName(ctx)) return undefined;
+  if (ALL_MENU_LABELS.has(text)) return text;
+  return undefined;
+}
+
 /**
- * Middleware: for group commands (except /help), require an active trip and
- * active participant. Sets `ctx.trip` and `ctx.participant` on success.
+ * Middleware: for group commands and menu-button taps (except public ones),
+ * require an active trip and active participant.
  */
 export function tripAccessMiddleware(
   repo: Repository,
@@ -43,12 +54,19 @@ export function tripAccessMiddleware(
     }
 
     const cmd = commandName(ctx);
+    const label = menuLabel(ctx);
+
     if (cmd && PUBLIC_COMMANDS.has(cmd)) {
       await next();
       return;
     }
 
-    if (!cmd) {
+    if (label && PUBLIC_MENU_LABELS.has(label)) {
+      await next();
+      return;
+    }
+
+    if (!cmd && !label) {
       await next();
       return;
     }
@@ -56,7 +74,7 @@ export function tripAccessMiddleware(
     const groupId = ctx.chat!.id;
     const trip = repo.getTripByGroupId(groupId);
     if (!trip) {
-      await ctx.reply("No trip here yet. Run /init_trip first.");
+      await ctx.reply("No trip here yet. Tap 🚀 Start Trip to begin.");
       return;
     }
 
@@ -72,9 +90,6 @@ export function tripAccessMiddleware(
   };
 }
 
-/**
- * Guard for callback queries: ensure the actor is the intended user.
- */
 export async function assertCallbackActor(
   ctx: Ctx,
   expectedUserId: number,
@@ -90,9 +105,6 @@ export async function assertCallbackActor(
   return true;
 }
 
-/**
- * Load trip + active participant for a group callback (no reply on failure).
- */
 export function loadTripParticipant(
   repo: Repository,
   groupId: number,
@@ -104,3 +116,4 @@ export function loadTripParticipant(
   if (!participant?.active) return undefined;
   return { trip, participant };
 }
+
