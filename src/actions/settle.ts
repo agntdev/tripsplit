@@ -194,6 +194,7 @@ export async function handlePayeeConfirm(
 export async function handlePayeeDispute(
   ctx: Ctx,
   repo: Repository,
+  bot: Bot<Ctx>,
   settlementId: number,
 ): Promise<void> {
   if (!ctx.from) return;
@@ -212,9 +213,26 @@ export async function handlePayeeDispute(
     return;
   }
 
+  repo.updateSettlement(settlementId, { status: "expired" });
+
+  const trip = repo.getTripById(settlement.tripId);
+  const payer = memberName(repo, settlement.tripId, settlement.payerUserId);
+  const payee = memberName(repo, settlement.tripId, settlement.payeeUserId);
+
   await ctx.reply(
     "Marked as disputed. Ask the organizer for 📁 Export or settle again when resolved.",
   );
+
+  if (trip) {
+    try {
+      await bot.api.sendMessage(
+        trip.telegramGroupId,
+        `⚠️ Settlement disputed: ${payer} → ${payee} ${formatCents(settlement.amountCents)}`,
+      );
+    } catch {
+      // Group may be unreachable in harness edge cases.
+    }
+  }
 }
 
 export async function handleSettleCancel(
