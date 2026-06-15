@@ -6,6 +6,8 @@
 export type SessionStep =
   | "idle"
   | "awaiting_add_member"
+  | "expense_amount"
+  | "expense_description"
   | "expense_payer"
   | "expense_participants"
   | "expense_pick_people"
@@ -26,6 +28,7 @@ export interface ExpenseDraft {
 export interface Session {
   step: SessionStep;
   draft: ExpenseDraft | null;
+  customShareIndex?: number;
 }
 
 export const initialSession = (): Session => ({
