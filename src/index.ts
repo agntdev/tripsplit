@@ -6,6 +6,7 @@
  * See docs/design.md §1.4.
  */
 import { createBot } from "@agntdev/bot-toolkit";
+import { registerHelp } from "./commands/help";
 import { registerInitTrip } from "./commands/initTrip";
 import type { Ctx } from "./context";
 import { tripAccessMiddleware } from "./middleware/access";
@@ -24,6 +25,8 @@ export function makeBot(repo: Repository = createRepository()) {
   });
 
   bot.use(tripAccessMiddleware(repo));
+
+  registerHelp(bot);
 
   registerInitTrip(bot, repo);
 
