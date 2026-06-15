@@ -1,6 +1,6 @@
 /**
  * Trip access-control middleware.
- * Guards slash commands and reply-keyboard menu taps (button-first UX).
+ * Guards reply-keyboard menu taps (button-only UX).
  */
 import type { Middleware } from "grammy";
 import { CB_PREFIX } from "../config";
@@ -17,9 +17,6 @@ export interface TripContext {
   participant: Participant;
 }
 
-/** Commands that skip the trip/participant guard. */
-export const PUBLIC_COMMANDS = new Set(["help", "init_trip"]);
-
 const PUBLIC_CALLBACKS = new Set([
   `${CB_PREFIX}menu:help`,
   `${CB_PREFIX}menu:start`,
@@ -30,25 +27,17 @@ export function isGroupChat(ctx: Ctx): boolean {
   return type === "group" || type === "supergroup";
 }
 
-function commandName(ctx: Ctx): string | undefined {
-  const text = ctx.message?.text;
-  if (!text) return undefined;
-  const entity = ctx.message?.entities?.find((e) => e.type === "bot_command");
-  if (!entity) return undefined;
-  const raw = text.slice(entity.offset, entity.offset + entity.length);
-  return raw.replace(/@\w+$/, "").slice(1).toLowerCase();
-}
-
 function menuLabel(ctx: Ctx): string | undefined {
   const text = ctx.message?.text?.trim();
-  if (!text || commandName(ctx)) return undefined;
+  if (!text) return undefined;
   if (ALL_MENU_LABELS.has(text)) return text;
   return undefined;
 }
 
 /**
- * Middleware: for group commands and menu-button taps (except public ones),
- * require an active trip and active participant.
+ * Middleware: menu-button taps (except public pre-trip ones) require an
+ * active trip and active participant. Wizard text input passes through when
+ * step !== idle.
  */
 export function tripAccessMiddleware(
   repo: Repository,
@@ -85,20 +74,14 @@ export function tripAccessMiddleware(
       return;
     }
 
-    const cmd = commandName(ctx);
     const label = menuLabel(ctx);
-
-    if (cmd && PUBLIC_COMMANDS.has(cmd)) {
-      await next();
-      return;
-    }
 
     if (label && PUBLIC_MENU_LABELS.has(label)) {
       await next();
       return;
     }
 
-    if (!cmd && !label) {
+    if (!label) {
       if (ctx.session.step !== "idle") {
         const groupId = ctx.chat!.id;
         const trip = repo.getTripByGroupId(groupId);
@@ -159,4 +142,3 @@ export function loadTripParticipant(
   if (!participant?.active) return undefined;
   return { trip, participant };
 }
-
