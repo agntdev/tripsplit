@@ -13,7 +13,7 @@ export interface TripContext {
 }
 
 /** Commands that skip the trip/participant guard. */
-export const PUBLIC_COMMANDS = new Set(["help"]);
+export const PUBLIC_COMMANDS = new Set(["help", "init_trip"]);
 
 export function isGroupChat(ctx: Ctx): boolean {
   const type = ctx.chat?.type;
