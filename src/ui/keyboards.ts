@@ -60,3 +60,35 @@ export function removeMemberKeyboard(members: Participant[]) {
   rows.push([inlineButton("« Back", `${CB_PREFIX}members:back`)]);
   return inlineKeyboard(rows);
 }
+
+/** Pick a payee for settlement (excludes the payer). */
+export function settlePickPayeeKeyboard(
+  members: Participant[],
+  payerUserId: number,
+) {
+  const rows = members
+    .filter((m) => m.telegramUserId !== payerUserId)
+    .map((m) => [
+      inlineButton(m.displayName, `${CB_PREFIX}settle:pick:${m.telegramUserId}`),
+    ]);
+  rows.push([inlineButton("Cancel", `${CB_PREFIX}settle:cancel`)]);
+  return inlineKeyboard(rows);
+}
+
+/** Payer confirmation keyboard for a pending settlement. */
+export function settlePayerKeyboard(settlementId: number) {
+  return inlineKeyboard([
+    [inlineButton("I paid", `${CB_PREFIX}settle:paid:${settlementId}`)],
+    [inlineButton("Cancel", `${CB_PREFIX}settle:cancel:${settlementId}`)],
+  ]);
+}
+
+/** Payee DM confirmation keyboard. */
+export function settlePayeeConfirmKeyboard(settlementId: number) {
+  return inlineKeyboard([
+    [
+      inlineButton("Confirm receipt", `${CB_PREFIX}settle:confirm:${settlementId}`),
+      inlineButton("Dispute", `${CB_PREFIX}settle:dispute:${settlementId}`),
+    ],
+  ]);
+}

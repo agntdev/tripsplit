@@ -7,8 +7,9 @@ import type { Ctx } from "../context";
 import { showHelp } from "../actions/help";
 import { runInitTrip } from "../actions/initTrip";
 import { showBalances } from "../actions/balances";
-import { promptExpenseAmount } from "../actions/expense";
 import { showMembersMenu } from "../actions/members";
+import { promptExpenseAmount } from "../actions/expense";
+import { startSettle } from "../actions/settle";
 import { isGroupChat } from "../middleware/access";
 import type { Repository } from "../storage/repository";
 import { MENU } from "./labels";
@@ -39,7 +40,7 @@ export function registerMenu(bot: Bot<Ctx>, repo: Repository): void {
 
   bot.hears(MENU.SETTLE, async (ctx) => {
     if (!ctx.trip) return;
-    await notYet(ctx, "Settle");
+    await startSettle(ctx, repo);
   });
 
   bot.hears(MENU.MEMBERS, async (ctx) => {
