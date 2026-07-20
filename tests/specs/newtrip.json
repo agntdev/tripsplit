@@ -1,0 +1,20 @@
+[
+  {
+    "name": "/newtrip",
+    "steps": [
+      {
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Create new trip with name and currency"
+            }
+          }
+        ],
+        "send": {
+          "text": "/newtrip"
+        }
+      }
+    ]
+  }
+]
