@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Record Expense",
+    "steps": [
+      {
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Open expense recording interface"
+            }
+          }
+        ],
+        "send": {
+          "callback": "expense:start"
+        }
+      }
+    ]
+  }
+]
