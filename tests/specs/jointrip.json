@@ -1,0 +1,20 @@
+[
+  {
+    "name": "/jointrip",
+    "steps": [
+      {
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Request to join an active trip"
+            }
+          }
+        ],
+        "send": {
+          "text": "/jointrip"
+        }
+      }
+    ]
+  }
+]
